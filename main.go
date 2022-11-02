@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
-	"strings"
 )
 
 type AuthorResponse struct {
@@ -40,22 +40,23 @@ type WorkSort struct {
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
+	re := regexp.MustCompile(`\r?\n`)
 
 	fmt.Println("Enter books name:")
-	nazovKnihy, err := reader.ReadString('\n')
+	booksName, err := reader.ReadString('\n')
 	if err != nil {
 		log.Fatal(err)
 	}
-	nazovKnihy = strings.TrimSuffix(nazovKnihy, "\n")
+	booksName = re.ReplaceAllString(booksName, "")
 
 	fmt.Println("Enter works sorting  (asc, desc):")
-	zoradenie, err := reader.ReadString('\n')
+	order, err := reader.ReadString('\n')
 	if err != nil {
 		log.Fatal(err)
 	}
-	zoradenie = strings.TrimSuffix(zoradenie, "\n")
+	order = re.ReplaceAllString(order, "")
 
-	var baseUrl = "https://openlibrary.org/search.json?title=" + url.QueryEscape(nazovKnihy)
+	var baseUrl = "https://openlibrary.org/search.json?title=" + url.QueryEscape(booksName)
 
 	fmt.Println("Searching: " + baseUrl)
 
@@ -126,30 +127,18 @@ func main() {
 			sortBooks = append(sortBooks, workSort)
 		}
 
-		// here todo > sort sortBooks by value
-		// reference https://www.geeksforgeeks.org/how-to-sort-golang-map-by-keys-or-values/
-
-		if zoradenie == "asc" {
+		if order == "asc" {
 			sort.Slice(sortBooks, func(i, j int) bool {
 				return sortBooks[i].revision < sortBooks[j].revision
 			})
 		}
-		if zoradenie == "desc" {
+		if order == "desc" {
 			sort.Slice(sortBooks, func(i, j int) bool {
 				return sortBooks[i].revision > sortBooks[j].revision
 			})
 		}
-		
-	
-			
-			
-		
-		// fmt.Println(zoradenie)
-		// 	sort.Slice(sortBooks, func(i, j int) bool {
-		// 		return sortBooks[i].revision < sortBooks[j].revision
-		// 	})
 
-		for k:= 0; k < len(sortBooks); k++ {
+		for k := 0; k < len(sortBooks); k++ {
 			fmt.Println("   - " + sortBooks[k].work.Title + " (" + strconv.Itoa(sortBooks[k].revision) + ")")
 
 		}
@@ -163,9 +152,6 @@ func removeDuplicateStringValues(stringSlice []string) []string {
 	keys := make(map[string]bool)
 	list := []string{}
 
-	// If the key(values of the slice) is not equal
-	// to the already present value in new slice (list)
-	// then we append it. else we jump on another element.
 	for _, entry := range stringSlice {
 		if _, value := keys[entry]; !value {
 			keys[entry] = true
@@ -179,9 +165,6 @@ func removeDuplicateValues(workSlice []Work) []Work {
 	keys := make(map[string]bool)
 	list := []Work{}
 
-	// If the key(values of the slice) is not equal
-	// to the already present value in new slice (list)
-	// then we append it. else we jump on another element.
 	for _, entry := range workSlice {
 		if _, value := keys[entry.Title]; !value {
 			keys[entry.Title] = true
@@ -191,5 +174,3 @@ func removeDuplicateValues(workSlice []Work) []Work {
 	return list
 
 }
-
-// func sortbyrevision(records map[string]int64)
