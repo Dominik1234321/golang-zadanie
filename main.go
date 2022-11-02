@@ -38,13 +38,6 @@ type WorkSort struct {
 	revision int
 }
 
-// type skuska struct {
-// 	Key string
-// 	Value int
-// }
-
-
-
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
@@ -135,27 +128,35 @@ func main() {
 
 		// here todo > sort sortBooks by value
 		// reference https://www.geeksforgeeks.org/how-to-sort-golang-map-by-keys-or-values/
-		
-		if zoradenie == "acs" {
-		sort.Slice(sortBooks, func(i, j int) bool {
-			return sortBooks[i].revision < sortBooks[j].revision
-		})
-	}		else if zoradenie == "desc"{
-		sort.Slice(sortBooks, func(i, j int) bool {
-			return sortBooks[i].revision > sortBooks[j].revision
-		})
-	}
-		for k := 0; k < len(sortBooks); k++ {
-		fmt.Println("- " + sortBooks[k].work.Title + " (" + strconv.Itoa(sortBooks[k].revision) + ")")
 
-		}		
+		if zoradenie == "asc" {
+			sort.Slice(sortBooks, func(i, j int) bool {
+				return sortBooks[i].revision < sortBooks[j].revision
+			})
+		}
+		if zoradenie == "desc" {
+			sort.Slice(sortBooks, func(i, j int) bool {
+				return sortBooks[i].revision > sortBooks[j].revision
+			})
+		}
+		
+	
+			
+			
+		
+		// fmt.Println(zoradenie)
+		// 	sort.Slice(sortBooks, func(i, j int) bool {
+		// 		return sortBooks[i].revision < sortBooks[j].revision
+		// 	})
+
+		for k:= 0; k < len(sortBooks); k++ {
+			fmt.Println("   - " + sortBooks[k].work.Title + " (" + strconv.Itoa(sortBooks[k].revision) + ")")
+
+		}
 		fmt.Println("")
 		fmt.Println("")
-		
-
-		
-		
 	}
+
 }
 
 func removeDuplicateStringValues(stringSlice []string) []string {
@@ -189,11 +190,6 @@ func removeDuplicateValues(workSlice []Work) []Work {
 	}
 	return list
 
-	
 }
 
-
-
-
 // func sortbyrevision(records map[string]int64)
-	
